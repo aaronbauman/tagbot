@@ -1,0 +1,23 @@
+tagbot.mention:
+  path: '/tagbot/mention'
+  defaults:
+    _title: 'Tagbot Mention'
+    _controller: '\Drupal\tagbot\Controller\Responder::respondToMentions'
+  requirements:
+    _permission: 'access content'
+
+tagbot.manual_respond:
+  path: 'admin/reports/tagbot/manual-respond'
+  defaults:
+    _title: 'Manual respond'
+    _form: 'Drupal\tagbot\Form\ManualRespond'
+  requirements:
+    _permission: 'administer site configuration'
+
+tagbot.manual_respond_confirm:
+  path: 'admin/reports/tagbot/manual-respond/{mention_id}'
+  defaults:
+    _title: 'Manual respond'
+    _form: 'Drupal\tagbot\Form\ManualRespondConfirm'
+  requirements:
+    _permission: 'administer site configuration'

@@ -1,0 +1,57 @@
+<form action="/ParkingPortal/Philadelphia/Home/DoSearchAction" data-ajax="true" data-ajax-begin="($(&#39;#ContestClicked&#39;).val() == &#39;true&#39;) ? DPSMod ▶
+        <h3><i class="fas fa-search" aria-hidden="true"></i> Search Results</h3>
+<table class="dps-table search-results-table">
+  <thead>
+  <tr>
+    <th>Select</th>
+    <th>Ticket<br />Number</th>
+    <th>License<br />Plate</th>
+    <th>State or<br />Province</th>
+    <th>Issue<br />Date</th>
+    <th>Status</th>
+    <th>Amount<br />Due</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr >
+    <td>
+      <!-- Will either show check box or red flag for unpayable tickets. -->
+      <input checked="checked" class="checkbox checkbox__select ticket-checkbox" id="SelectedTickets" name="TicketsSelected" type="checkbox" value="78146750" />       ▶
+    </td>
+    <td>806283826<br /><span id="openDetails78146750" class="open-details trigger-modal" data-key="78146750" data-size="large" data-href="Do ▶
+                        <td>JNX6461</td>
+                        <!-- Google Translate api will not translate any text that has the class "notranslate" -->
+    <td><span class="notranslate">PA</span></td>
+    <td>11/6/2019</td>
+    <td>Open</td>
+    <td class="amount-due-value">$<span class="citation-value">26.00</span></td>
+  </tr>
+  <!-- For unpayable tickets will add row showing reason not payable. -->
+  </tbody>
+</table>
+</div>
+<div class="col-12 total-amount ticket-search-box">
+  <div class="total-amount__label">TOTAL AMOUNT DUE</div>
+  <div class="total-amount__value">$<span id="searchResultsAmtDue"></span></div>
+</div>
+<div class="col-12 non-refundable-text ticket-search-box d-none">
+  A non-refundable Convenience Fee of $3.50 will be included for each transaction.
+</div>
+<div class="row mt-5 ticket-search-box">
+  <div class="col-12 ticket-search-row">
+    <div class="mr-md-5">
+      <button type="submit" id="contestBtn" name="contestBtn" class="button button--secondary button--full-width" data-size="large" onclick="$('#Conte ▶
+            </div>
+            <div>
+                <button type="submit" id="payNowBtn" name="payNowBtn" class="button button--primary button--full-width" data-size="regular" onclick="$('#Contest ▶
+    </div>
+  </div>
+</div>
+<input data-val="true" data-val-required="The ContestClicked field is required." id="ContestClicked" name="ContestClicked" type="hidden" value="False" /></form> ▶
+<div class="col-12">
+  <p>Please call customer service at 888-591-3636, Monday through Friday, 8:00 am to 8:00 pm for any assistance with your payment.</p>
+</div>
+<div class="col-12 contact-section--red">
+  <p>Inability to pay a ticket with the online payment system does not excuse payment of any late fees, as stated on the ticket.</p>
+</div>
+</div>

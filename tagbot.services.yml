@@ -1,0 +1,7 @@
+services:
+  tagbot.twitter_client:
+    class: Drupal\tagbot\TwitterClient
+
+  tagbot.responder:
+    class: Drupal\tagbot\Controller\Responder
+    arguments: ['@tagbot.twitter_client', '@http_handler_stack']

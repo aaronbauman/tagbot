@@ -1,0 +1,9 @@
+{
+  "name": "aaronbauman/tagbot",
+  "type": "drupal-module",
+  "description": "Twitter bot to query license plate violations against PPA payment portal.",
+  "keywords": ["Drupal"],
+  "require": {
+    "themattharris/tmhoauth": "^0.8.4"
+  }
+}
