@@ -61,14 +61,20 @@ class TwitterClient {
     }
   }
 
-  public function sendTweet($status, $in_reply_to_status_id = '') {
+  public function sendTweet($status, $in_reply_to_status_id = '', $quote = FALSE) {
     $request = [
       'method' => 'POST',
       'url' => $this->tmhOAuth->url('1.1/statuses/update'),
     ];
-    $request['params'] = ['status' => $status];
+    $request['params'] = [
+      'status' => $status
+    ];
     if ($in_reply_to_status_id) {
       $request['params']['in_reply_to_status_id'] = $in_reply_to_status_id;
+      if ($quote) {
+        // Quote the original tweet, e.g. for image context.
+        $request['params']['attachment_url'] = 'https://twitter.com/i/web/status/' . $in_reply_to_status_id;
+      }
     }
     $code = $this->tmhOAuth->user_request($request);
     if ($code == 200) {

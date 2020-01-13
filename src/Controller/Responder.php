@@ -64,7 +64,7 @@ class Responder extends ControllerBase {
   /**
    * Method description.
    */
-  public function respondToMentions() {
+  public function respondToMentions($record = TRUE) {
     $mentions = [];
     try {
       $since_id = \Drupal::state()->get('tagbot_last_mention');
@@ -80,18 +80,20 @@ class Responder extends ControllerBase {
     $count = count($mentions);
     \Drupal::logger('tagbot')->notice("Found $count mentions");
     foreach ($mentions as $mention) {
-      $this->respondToMention($mention);
+      $this->respondToMention($mention, $record);
     }
     return [
       '#markup' => 'foo'
     ];
   }
 
-  public function respondToMention(array $mention) {
+  public function respondToMention(array $mention, $record = TRUE) {
     $tag_ids = $this->extractTagIdsFromMention($mention);
     if (empty($tag_ids)) {
       \Drupal::logger('tagbot')->notice('No tag ids found in mention ' . $mention['id'] . ' : ' . $mention['full_text']);
-      \Drupal::state()->set('tagbot_last_mention', $mention['id']);
+      if ($record) {
+        \Drupal::state()->set('tagbot_last_mention', $mention['id']);
+      }
       // If there aren't any tags in this mention, don't bother replying.
       return;
     }
@@ -241,7 +243,7 @@ class Responder extends ControllerBase {
     }
     $replies[] = $text;
     if (count($replies) == 1) {
-      $this->sendReply($mention, $text);
+      $this->sendReply($mention, $text, TRUE);
     }
     else {
       $this->sendThreadedReplies($mention, $replies);
@@ -254,14 +256,14 @@ class Responder extends ControllerBase {
     $this->sendReply($mention, $text);
   }
 
-  protected function sendReply($mention, $text) {
+  protected function sendReply($mention, $text, $quote = FALSE) {
     try {
       $last_id = $mention['id'];
       if (\Drupal::state()->get('TAGBOT_TEST_MODE')) {
         dpm('Would have replied to mention : ' . $mention['id'] . ' with text "' . $text . '"');
       }
       else {
-        $mention = $this->tagbotTwitterClient->sendTweet($text, $mention['id']);
+        $mention = $this->tagbotTwitterClient->sendTweet($text, $mention['id'], $quote);
         \Drupal::state()->set('tagbot_last_mention', $last_id);
       }
     }
@@ -272,8 +274,11 @@ class Responder extends ControllerBase {
   }
 
   protected function sendThreadedReplies($mention, $replies) {
+    $quote = TRUE;
     foreach ($replies as $reply) {
-      $mention = $this->sendReply($mention, $reply);
+      $mention = $this->sendReply($mention, $reply, $quote);
+      // Quote-tweet the first reply only.
+      $quote = FALSE;
     }
     return $mention;
   }

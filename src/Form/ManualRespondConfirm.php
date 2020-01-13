@@ -49,7 +49,7 @@ class ManualRespondConfirm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    \Drupal::service('tagbot.responder')->respondToMention($form_state->getValue('tweet'));
+    \Drupal::service('tagbot.responder')->respondToMention($form_state->getValue('tweet'), FALSE);
     $form_state->setRedirect('tagbot.manual_respond');
   }
 
