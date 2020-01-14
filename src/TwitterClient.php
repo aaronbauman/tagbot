@@ -33,6 +33,7 @@ class TwitterClient {
       'method' => 'GET',
       'params' => [
         'tweet_mode' => 'extended',
+        'include_entities' => TRUE,
       ]
     ];
     $code = $this->tmhOAuth->user_request($request);
@@ -49,7 +50,8 @@ class TwitterClient {
       'method' => 'GET',
       'url' => $this->tmhOAuth->url('1.1/statuses/mentions_timeline'),
       'params' => [
-        'tweet_mode' => 'extended'
+        'tweet_mode' => 'extended',
+        'include_entities' => TRUE
       ]
     ];
     if ($since_id) {
@@ -61,7 +63,7 @@ class TwitterClient {
     }
   }
 
-  public function sendTweet($status, $in_reply_to_status_id = '', $quote = FALSE) {
+  public function sendTweet($status, $mention, $quote = FALSE) {
     $request = [
       'method' => 'POST',
       'url' => $this->tmhOAuth->url('1.1/statuses/update'),
@@ -69,16 +71,22 @@ class TwitterClient {
     $request['params'] = [
       'status' => $status
     ];
-    if ($in_reply_to_status_id) {
-      $request['params']['in_reply_to_status_id'] = $in_reply_to_status_id;
-      if ($quote) {
-        // Quote the original tweet, e.g. for image context.
-        $request['params']['attachment_url'] = 'https://twitter.com/i/web/status/' . $in_reply_to_status_id;
-      }
+    $request['params']['in_reply_to_status_id'] = $mention['id'];
+    if ($quote) {
+      // Quote the original tweet, e.g. for image context.
+      $request['params']['attachment_url'] = 'https://twitter.com/' . $mention['user']['screen_name'] . '/status/' . $mention['id'];
     }
+    dpm($request, 'request');
     $code = $this->tmhOAuth->user_request($request);
+    dpm($code, 'response code');
+    $response = json_decode($this->tmhOAuth->response['response'], true);
+    dpm($response, 'response');
     if ($code == 200) {
-      return json_decode($this->tmhOAuth->response['response'], true);
+      return $response;
+    }
+    else {
+      \Drupal::logger('tagbot')->error("Failed response " . $code . ": " . print_r($response, 1));
+      return FALSE;
     }
   }
 

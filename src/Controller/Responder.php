@@ -230,7 +230,7 @@ class Responder extends ControllerBase {
     }
     $replies = [];
     $username = $mention['user']['screen_name'];
-    $text = '@' . $username . ' ' . $total_count . ' known violations totalling $' . number_format($total, 2) . ' for tag #' . str_replace(':', '_', $tag) . ' : ' . $total_count . PHP_EOL . PHP_EOL;
+    $text = '@' . $username . ' ' . $total_count . ' known violations totalling $' . number_format($total, 2) . ' for tag #' . str_replace(':', '_', $tag) . PHP_EOL . PHP_EOL;
     foreach ($count_by_type as $type => $count) {
       $next_line = $count . ' | ' . $type . PHP_EOL;
       if (strlen($text . $next_line) > 280) {
@@ -242,8 +242,9 @@ class Responder extends ControllerBase {
       }
     }
     $replies[] = $text;
+    dpm($replies);
     if (count($replies) == 1) {
-      $this->sendReply($mention, $text, TRUE);
+      $this->sendReply($mention, $text);
     }
     else {
       $this->sendThreadedReplies($mention, $replies);
@@ -256,15 +257,17 @@ class Responder extends ControllerBase {
     $this->sendReply($mention, $text);
   }
 
-  protected function sendReply($mention, $text, $quote = FALSE) {
+  protected function sendReply($mention, $text, $quote = TRUE) {
     try {
       $last_id = $mention['id'];
       if (\Drupal::state()->get('TAGBOT_TEST_MODE')) {
         dpm('Would have replied to mention : ' . $mention['id'] . ' with text "' . $text . '"');
       }
       else {
-        $mention = $this->tagbotTwitterClient->sendTweet($text, $mention['id'], $quote);
-        \Drupal::state()->set('tagbot_last_mention', $last_id);
+        $mention = $this->tagbotTwitterClient->sendTweet($text, $mention, $quote);
+        if ($last_id) {
+          \Drupal::state()->set('tagbot_last_mention', $last_id);
+        }
       }
     }
     catch (\Exception $e) {
@@ -277,6 +280,9 @@ class Responder extends ControllerBase {
     $quote = TRUE;
     foreach ($replies as $reply) {
       $mention = $this->sendReply($mention, $reply, $quote);
+      if (!$mention) {
+        return;
+      }
       // Quote-tweet the first reply only.
       $quote = FALSE;
     }
